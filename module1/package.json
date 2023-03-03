@@ -1,0 +1,21 @@
+{
+  "name": "node_tasks",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "task1": "nodemon --exec babel-node ./tasks/task1.js",
+    "task2": "nodemon --exec babel-node ./tasks/task2.js"
+  },
+  "author": "Denis Korepin",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/core": "^7.21.0",
+    "@babel/node": "^7.20.7",
+    "nodemon": "^2.0.21"
+  },
+  "dependencies": {
+    "csvtojson": "^2.0.10"
+  }
+}
