@@ -1,5 +1,5 @@
 {
-  "name": "node_tasks",
+  "name": "module1",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -11,11 +11,11 @@
   "author": "Denis Korepin",
   "license": "ISC",
   "devDependencies": {
-    "@babel/core": "^7.21.0",
-    "@babel/node": "^7.20.7",
-    "nodemon": "^2.0.21"
+    "@babel/core": "7.21.0",
+    "@babel/node": "7.20.7",
+    "nodemon": "2.0.21"
   },
   "dependencies": {
-    "csvtojson": "^2.0.10"
+    "csvtojson": "2.0.10"
   }
 }

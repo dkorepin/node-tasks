@@ -1,30 +1,25 @@
 {
-  "name": "node_tasks",
+  "name": "module2",
   "version": "1.0.0",
   "description": "",
-  "main": "src/index.ts",
+  "main": "src/index.js",
   "type": "module",
   "scripts": {
-    "build": "tsc --build",
-    "babel": "babel-node ./dist/index.js",
-    "build-babel": "npm run build && npm run babel",
-    "start": "nodemon --watch 'src/**' --ext 'ts,json' --exec npm run build-babel"
+    "compile": "babel-node ./src/index.js",
+    "lint": "eslint --max-warnings 0 --ext .js ./src",
+    "lint-compile": "npm run lint && npm run compile",
+    "start": "nodemon --exec npm run lint-compile"
   },
   "author": "Denis Korepin",
   "license": "ISC",
   "devDependencies": {
-    "@babel/core": "^7.21.0",
-    "@babel/node": "^7.20.7",
-    "@types/express": "^4.17.17",
-    "@types/joi": "^17.2.3",
-    "@types/node": "^18.15.1",
-    "@types/uuid": "^9.0.1",
-    "typescript": "^4.9.2"
+    "eslint": "8.36.0",
+    "@babel/node": "^7.20.7"
   },
   "dependencies": {
-    "nodemon": "^2.0.21",
-    "joi": "^17.8.3",
-    "express": "^4.18.2",
-    "uuid": "^9.0.0"
+    "express": "4.18.2",
+    "joi": "17.8.3",
+    "nodemon": "2.0.21",
+    "uuid": "9.0.0"
   }
 }
