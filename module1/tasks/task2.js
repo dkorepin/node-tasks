@@ -20,4 +20,7 @@ const config = {
   },
 };
 
-readStream.pipe(helper(config)).pipe(writeStream);
+const csv = helper(config);
+csv.on('error', console.error);
+
+readStream.pipe(csv).pipe(writeStream).on('error', console.error);
