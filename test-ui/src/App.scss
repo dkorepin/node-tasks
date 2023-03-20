@@ -1,0 +1,48 @@
+.App {
+  text-align: center;
+  position: relative;
+  height: 100vh;
+  padding: 10px;
+
+  .white-text {
+    color: white;
+  }
+
+  .card-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    background-color: #eeeeee;
+    border-radius: 8px;
+    padding: 6px;
+    position: relative;
+
+    .user-card {
+      width: 250px;
+      margin: 8px;
+
+      .second-button {
+        margin-left: 10px;
+      }
+    }
+
+    .spinner-container {
+      position: absolute;
+      left: 0;
+      top: 0;
+      min-height: 269px;
+      height: 100%;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: rgba($color: #ffffff, $alpha: 0.5);
+    }
+
+    .width100 {
+      width: 100%;
+    }
+  }
+
+}
