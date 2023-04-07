@@ -1,3 +1,3 @@
-import { TUser } from "./user.types";
+import { TUser } from "./user-types";
 
-export const userFields: (keyof TUser)[] = ["login", "password", "age"];
+export const userFields: (keyof Omit<TUser, 'groups'>)[] = ["login", "password", "age"];

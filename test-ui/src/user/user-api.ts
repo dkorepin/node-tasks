@@ -1,22 +1,6 @@
+import { TSearchParams, handleErrors } from "../api-helpers";
 import { OnErrorHandler } from "../simple-alert";
-import { TUser, TSearchParams, TUserResponse } from "./user.types";
-
-const getErrors = (resp: any): string => {
-  console.log(resp.message)
-  if (resp.message) return resp.message;
-
-  const messages: string[] =
-    resp.errors?.map((err: { message: string }) => err?.message || "") || [];
-  return messages.length > 0 ? messages.join(", ") : "Unknown Error";
-};
-
-const handleErrors = (
-  response: Response,
-  json: any,
-  onError: OnErrorHandler
-) => {
-  if (response.status !== 200) return onError(getErrors(json));
-};
+import { TUser, TUserResponse } from "./user-types";
 
 export const fetchUsers = async (
   { search, limit }: TSearchParams,
@@ -95,3 +79,25 @@ export const fetchDeleteUser = async (id: string, onError: OnErrorHandler) => {
     console.error(e);
   }
 };
+
+export const fetchAddGroup = async (
+  data: Partial<{userId: string, groupId: string}>,
+  onError: OnErrorHandler
+) => {
+  try {
+    const headers = new Headers();
+    headers.set("content-type", "application/json");
+
+    const response = await fetch(`http://localhost:3001/users/addToGroup/${data.userId}`, {
+      method: "Post",
+      headers,
+      body: JSON.stringify({id: data.groupId}),
+    });
+    const json = await response.json();
+
+    handleErrors(response, json, onError);
+  } catch (e) {
+    console.error(e);
+  }
+};
+

@@ -2,8 +2,8 @@ import React, { FC, useCallback, useContext, useEffect, useState } from "react";
 import { Button, Col, Container, Form, Row } from "react-bootstrap";
 import { userFields } from "./user-consts";
 import { UserContainer } from "./user-container";
-import { fetchCreateUser, fetchDeleteUser, fetchUsers } from "./user.api";
-import { TUser } from "./user.types";
+import { fetchCreateUser, fetchDeleteUser, fetchUsers } from "./user-api";
+import { TUser } from "./user-types";
 import { ErrorsContext } from "../simple-alert";
 
 export const UserPage: FC = () => {
@@ -59,6 +59,7 @@ export const UserPage: FC = () => {
 
   useEffect(() => {
     handleFetchUser();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
