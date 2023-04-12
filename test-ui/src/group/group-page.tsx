@@ -4,10 +4,12 @@ import { Permission, TGroup } from "./group-types";
 import { ErrorsContext } from "../simple-alert";
 import { fetchCreateGroup, fetchDeleteGroup, fetchGroups } from "./group-api";
 import { GroupsContainer } from "./group-container";
+import { AuthContext } from "../login";
 
 export const GroupsPage: FC = () => {
   const errorContext = useContext(ErrorsContext);
-  const [groupList, setGroupList] = useState<TGroup[]>([]);
+  const authContext = useContext(AuthContext);
+  const [groupList, setGroupList] = useState<{group?: TGroup[]}>({});
   const [isFetching, setIsFetching] = useState(false);
   const [groupForm, setGroupForm] = useState<{
     name: string;
@@ -19,17 +21,17 @@ export const GroupsPage: FC = () => {
 
   const handleFetchGroups = useCallback(async () => {
     setIsFetching(true);
-    await fetchGroups(setGroupList, errorContext.onError);
+    await fetchGroups(authContext.token, setGroupList, errorContext.onError);
     setIsFetching(false);
-  }, [errorContext.onError]);
+  }, [authContext.token, errorContext.onError]);
 
   const handleDeleteGroup = useCallback(
     async (id: string) => {
       setIsFetching(true);
-      await fetchDeleteGroup(id, errorContext.onError);
+      await fetchDeleteGroup(id, authContext.token, errorContext.onError);
       handleFetchGroups();
     },
-    [handleFetchGroups, errorContext.onError]
+    [authContext.token, handleFetchGroups, errorContext.onError]
   );
 
   const handleCreateGroup = useCallback(async () => {
@@ -41,10 +43,11 @@ export const GroupsPage: FC = () => {
           .split(",")
           .map((per) => per.trim()) as Permission[],
       },
+      authContext.token,
       errorContext.onError
     );
     handleFetchGroups();
-  }, [groupForm, handleFetchGroups, errorContext.onError]);
+  }, [authContext.token, groupForm, handleFetchGroups, errorContext.onError]);
 
   const handleChangeGroupForm = useCallback(
     (key: keyof TGroup): React.ChangeEventHandler<HTMLInputElement> =>
@@ -56,7 +59,7 @@ export const GroupsPage: FC = () => {
 
   useEffect(() => {
     handleFetchGroups();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -70,7 +73,7 @@ export const GroupsPage: FC = () => {
       <Row className="mb-2">
         <GroupsContainer
           onRefresh={handleFetchGroups}
-          groupList={groupList}
+          groupList={groupList?.group || []}
           onDelete={handleDeleteGroup}
           isFetching={isFetching}
         />

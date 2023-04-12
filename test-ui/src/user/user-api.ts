@@ -1,103 +1,58 @@
-import { TSearchParams, handleErrors } from "../api-helpers";
+import {
+  TSearchParams,
+  fetchData,
+  fetchDelete,
+  postData,
+} from "../api-helpers";
 import { OnErrorHandler } from "../simple-alert";
-import { TUser, TUserResponse } from "./user-types";
+import { TUser } from "./user-types";
 
-export const fetchUsers = async (
+export const fetchUsers = (
   { search, limit }: TSearchParams,
-  callback: (users: TUser[]) => void,
+  token: string,
+  callback: (users: {}) => void,
   onError: OnErrorHandler
-) => {
-  try {
-    const response: Response = await fetch(
-      `http://localhost:3001/users?search=${search}&limit=${limit}`
-    );
-    const json: TUserResponse = await response.json();
-    handleErrors(response, json, onError);
-    callback(json?.users || []);
-  } catch (e) {
-    console.error(e);
-    callback([]);
-  }
-};
+) =>
+  fetchData(`users?search=${search}&limit=${limit}`, token, callback, onError);
 
-export const fetchCreateUser = async (
+export const fetchCreateUser = (
   user: Partial<TUser>,
+  token: string,
   onError: OnErrorHandler
-) => {
-  try {
-    const headers = new Headers();
-    headers.set("content-type", "application/json");
+) => postData("users", "Post", user, token, onError);
 
-    const response = await fetch(`http://localhost:3001/users`, {
-      method: "Post",
-      headers,
-      body: JSON.stringify(user),
-    });
-    const json = await response.json();
-
-    handleErrors(response, json, onError);
-  } catch (e) {
-    console.error(e);
-  }
-};
-
-export const fetchUpdateUser = async (
+export const fetchUpdateUser = (
   user: Partial<TUser>,
+  token: string,
   onError: OnErrorHandler
-) => {
-  try {
-    const headers = new Headers();
-    headers.set("content-type", "application/json");
+) =>
+  postData(
+    `users/${user.id}`,
+    "Put",
+    {
+      login: user.login,
+      password: user.password,
+      age: user.age,
+    },
+    token,
+    onError
+  );
 
-    const response = await fetch(`http://localhost:3001/users/${user.id}`, {
-      method: "Put",
-      headers,
-      body: JSON.stringify({
-        login: user.login,
-        password: user.password,
-        age: user.age,
-      }),
-    });
-    const json = await response.json();
-
-    handleErrors(response, json, onError);
-  } catch (e) {
-    console.error(e);
-  }
-};
-
-export const fetchDeleteUser = async (id: string, onError: OnErrorHandler) => {
-  try {
-    const response = await fetch(`http://localhost:3001/users/${id}`, {
-      method: "Delete",
-    });
-
-    const json = await response.json();
-
-    handleErrors(response, json, onError);
-  } catch (e) {
-    console.error(e);
-  }
-};
-
-export const fetchAddGroup = async (
-  data: Partial<{userId: string, groupId: string}>,
+export const fetchDeleteUser = (
+  id: string,
+  token: string,
   onError: OnErrorHandler
-) => {
-  try {
-    const headers = new Headers();
-    headers.set("content-type", "application/json");
+) => fetchDelete(`users/${id}`, token, onError);
 
-    const response = await fetch(`http://localhost:3001/users/addToGroup/${data.userId}`, {
-      method: "Post",
-      headers,
-      body: JSON.stringify({id: data.groupId}),
-    });
-    const json = await response.json();
-
-    handleErrors(response, json, onError);
-  } catch (e) {
-    console.error(e);
-  }
-};
-
+export const fetchAddGroup = (
+  data: Partial<{ userId: string; groupId: string }>,
+  token: string,
+  onError: OnErrorHandler
+) =>
+  postData(
+    `users/addToGroup/${data.userId}`,
+    "Post",
+    { id: data.groupId },
+    token,
+    onError
+  );

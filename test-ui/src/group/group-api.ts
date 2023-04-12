@@ -1,78 +1,37 @@
-import { handleErrors } from "../api-helpers";
+import { fetchData, fetchDelete, postData } from "../api-helpers";
 import { OnErrorHandler } from "../simple-alert";
-import { TGroupResponse, TGroup } from "./group-types";
+import { TGroup } from "./group-types";
 
 export const fetchGroups = async (
-  callback: (groups: TGroup[]) => void,
+  token: string,
+  callback: (groups: {}) => void,
   onError: OnErrorHandler
-) => {
-  try {
-    const response: Response = await fetch(`http://localhost:3001/group`);
-    const json: TGroupResponse = await response.json();
-    handleErrors(response, json, onError);
-    callback(json?.group || []);
-    return json?.group || [];
-  } catch (e) {
-    console.error(e);
-    callback([]);
-  }
-};
+) => fetchData("group", token, callback, onError);
 
 export const fetchCreateGroup = async (
   group: Partial<TGroup>,
+  token: string,
   onError: OnErrorHandler
-) => {
-  try {
-    const headers = new Headers();
-    headers.set("content-type", "application/json");
-
-    const response = await fetch(`http://localhost:3001/group`, {
-      method: "Post",
-      headers,
-      body: JSON.stringify(group),
-    });
-    const json = await response.json();
-
-    handleErrors(response, json, onError);
-  } catch (e) {
-    console.error(e);
-  }
-};
+) => postData("group", "Post", group, token, onError);
 
 export const fetchUpdateGroup = async (
   group: Partial<TGroup>,
+  token: string,
   onError: OnErrorHandler
-) => {
-  try {
-    const headers = new Headers();
-    headers.set("content-type", "application/json");
+) =>
+  postData(
+    `group/${group.id}`,
+    "Put",
+    {
+      name: group.name,
+      permissions: group.permissions,
+    },
+    token,
+    onError
+  );
 
-    const response = await fetch(`http://localhost:3001/group/${group.id}`, {
-      method: "Put",
-      headers,
-      body: JSON.stringify({
-        name: group.name,
-        permissions: group.permissions,
-      }),
-    });
-    const json = await response.json();
-
-    handleErrors(response, json, onError);
-  } catch (e) {
-    console.error(e);
-  }
-};
-
-export const fetchDeleteGroup = async (id: string, onError: OnErrorHandler) => {
-  try {
-    const response = await fetch(`http://localhost:3001/group/${id}`, {
-      method: "Delete",
-    });
-
-    const json = await response.json();
-
-    handleErrors(response, json, onError);
-  } catch (e) {
-    console.error(e);
-  }
-};
+export const fetchDeleteGroup = async (
+  id: string,
+  token: string,
+  onError: OnErrorHandler
+) => fetchDelete(`group/${id}`, token, onError);

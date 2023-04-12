@@ -13,6 +13,7 @@ import {
 import { Permission, TGroup } from "./group-types";
 import { ErrorsContext } from "../simple-alert";
 import { fetchUpdateGroup } from "./group-api";
+import { AuthContext } from "../login";
 
 export const GroupCard: FC<{
   group: TGroup;
@@ -20,6 +21,7 @@ export const GroupCard: FC<{
   onRefresh: () => void;
 }> = ({ group, onRefresh, onDelete }) => {
   const errorContext = useContext(ErrorsContext);
+  const authContext = useContext(AuthContext);
   const [isShowEdit, setIsShowEdit] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
   const [groupForm, setGroupForm] = useState<{
@@ -54,12 +56,14 @@ export const GroupCard: FC<{
           .split(",")
           .map((per) => per.trim()) as Permission[],
       },
+      authContext.token,
       errorContext.onError
     );
     setIsShowEdit(false);
     setIsFetching(false);
     onRefresh();
   }, [
+    authContext.token,
     group.id,
     groupForm.name,
     groupForm.permissions,

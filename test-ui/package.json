@@ -9,6 +9,7 @@
     "@types/jest": "^27.5.2",
     "@types/node": "^16.18.23",
     "@types/react": "^18.0.31",
+    "prettier": "^2.8.7",
     "@types/react-bootstrap": "^0.32.32",
     "@types/react-dom": "^18.0.11"
   },
@@ -23,8 +24,9 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
+    "start": "npm run format && react-scripts start",
+    "build": "npm run format && react-scripts build",
+    "format": "prettier --write \"src/**/*.ts\"",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

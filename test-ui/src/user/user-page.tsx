@@ -5,10 +5,12 @@ import { UserContainer } from "./user-container";
 import { fetchCreateUser, fetchDeleteUser, fetchUsers } from "./user-api";
 import { TUser } from "./user-types";
 import { ErrorsContext } from "../simple-alert";
+import { AuthContext } from "../login";
 
 export const UserPage: FC = () => {
   const errorContext = useContext(ErrorsContext);
-  const [userList, setUserList] = useState<TUser[]>([]);
+  const authContext = useContext(AuthContext);
+  const [userList, setUserList] = useState<{users?: TUser[]}>({});
   const [isFetching, setIsFetching] = useState(false);
   const [search, setSearch] = useState<string>("");
   const [limit, setLimit] = useState<number>(100);
@@ -30,9 +32,9 @@ export const UserPage: FC = () => {
 
   const handleFetchUser = useCallback(async () => {
     setIsFetching(true);
-    await fetchUsers({ limit, search }, setUserList, errorContext.onError);
+    await fetchUsers({ limit, search }, authContext.token, setUserList, errorContext.onError);
     setIsFetching(false);
-  }, [limit, search, errorContext.onError]);
+  }, [limit, search, errorContext.onError, authContext.token]);
 
   const handleChangeUserForm = useCallback(
     (key: keyof TUser): React.ChangeEventHandler<HTMLInputElement> =>
@@ -44,17 +46,17 @@ export const UserPage: FC = () => {
 
   const handleCreateUser = useCallback(async () => {
     setIsFetching(true);
-    await fetchCreateUser(userForm, errorContext.onError);
+    await fetchCreateUser(userForm, authContext.token, errorContext.onError);
     handleFetchUser();
-  }, [userForm, handleFetchUser, errorContext.onError]);
+  }, [userForm, handleFetchUser, errorContext.onError, authContext.token]);
 
   const handleDeleteUser = useCallback(
     async (id: string) => {
       setIsFetching(true);
-      await fetchDeleteUser(id, errorContext.onError);
+      await fetchDeleteUser(id, authContext.token, errorContext.onError);
       handleFetchUser();
     },
-    [handleFetchUser, errorContext.onError]
+    [handleFetchUser, authContext.token, errorContext.onError]
   );
 
   useEffect(() => {
@@ -88,7 +90,7 @@ export const UserPage: FC = () => {
       <Row className="mb-2">
         <UserContainer
           onRefresh={handleFetchUser}
-          userList={userList}
+          userList={userList?.users || []}
           isFetching={isFetching}
           onDeleteUser={handleDeleteUser}
         />

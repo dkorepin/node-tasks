@@ -9,5 +9,5 @@ export type TUser = {
 };
 
 export type TUserResponse = {
-    users: TUser[];
-}
+  users: TUser[];
+};

@@ -18,6 +18,7 @@ import { ErrorsContext } from "../simple-alert";
 import { UserGroups } from "./user-groups";
 import { fetchGroups } from "../group/group-api";
 import { TGroup } from "../group/group-types";
+import { AuthContext } from "../login";
 
 export const UserCard: FC<{
   user: TUser;
@@ -25,10 +26,11 @@ export const UserCard: FC<{
   onRefresh: () => void;
 }> = ({ user, onDeleteUser, onRefresh }) => {
   const errorContext = useContext(ErrorsContext);
+  const authContext = useContext(AuthContext);
   const [isShowEdit, setIsShowEdit] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
   const [userForm, setUserForm] = useState<Partial<Omit<TUser, "groups">>>({});
-  const [groupList, setGroupList] = useState<TGroup[]>([]);
+  const [groupList, setGroupList] = useState<{group?: TGroup[]}>({});
 
   const handleDelete = useCallback(
     () => onDeleteUser(user.id),
@@ -37,9 +39,9 @@ export const UserCard: FC<{
 
   const handleFetchGroups = useCallback(async () => {
     setIsFetching(true);
-    await fetchGroups(setGroupList, errorContext.onError);
+    await fetchGroups(authContext.token, setGroupList, errorContext.onError);
     setIsFetching(false);
-  }, [errorContext.onError]);
+  }, [authContext.token, errorContext.onError]);
 
   const handleOpenEdit = useCallback(() => {
     setIsShowEdit(true);
@@ -50,24 +52,25 @@ export const UserCard: FC<{
 
   const handleSave = useCallback(async () => {
     setIsFetching(true);
-    await fetchUpdateUser(userForm, errorContext.onError);
+    await fetchUpdateUser(userForm, authContext.token, errorContext.onError);
     setIsShowEdit(false);
     setIsFetching(false);
     onRefresh();
-  }, [errorContext.onError, onRefresh, userForm]);
+  }, [authContext.token, errorContext.onError, onRefresh, userForm]);
 
   const handleAddGroup = useCallback(
     (groupId: string) => async () => {
       setIsFetching(true);
       await fetchAddGroup(
         { userId: userForm.id, groupId },
+        authContext.token,
         errorContext.onError
       );
       setIsShowEdit(false);
       setIsFetching(false);
       onRefresh();
     },
-    [errorContext.onError, onRefresh, userForm]
+    [authContext.token, errorContext.onError, onRefresh, userForm]
   );
 
   const handleChangeUserForm = useCallback(
@@ -140,7 +143,7 @@ export const UserCard: FC<{
             </Dropdown.Toggle>
 
             <Dropdown.Menu>
-              {groupList.map((group) => (
+              {groupList?.group?.map((group) => (
                 <Dropdown.Item onClick={handleAddGroup(group.id)}>
                   {group.name}
                 </Dropdown.Item>
