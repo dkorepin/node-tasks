@@ -12,3 +12,5 @@ export const getToken = async (): Promise<string> => {
 
   return loginResponse.body.token;
 };
+
+export const TEST_DATA_RUNS = 1;
