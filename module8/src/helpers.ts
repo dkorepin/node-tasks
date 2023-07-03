@@ -1,6 +1,7 @@
 import { ObjectSchema, ValidationErrorItem } from "joi";
 import { Request, Response, NextFunction } from "express";
 import { ServiceLogger, logger } from "./logger";
+import { StatusCodes } from "http-status-codes";
 
 export const errorResponse = (schemaErrors: ValidationErrorItem[]) => {
   const errors = schemaErrors.map(({ path, message }) => {
@@ -23,7 +24,7 @@ export const validationMiddleware = (schema: ObjectSchema) => {
     if (error && error.isJoi) {
       const errorsDetails = errorResponse(error.details);
       logger.warn("validate service error:", errorsDetails);
-      res.status(400).json(errorsDetails);
+      res.status(StatusCodes.BAD_REQUEST).json(errorsDetails);
     } else {
       next();
     }
@@ -32,7 +33,7 @@ export const validationMiddleware = (schema: ObjectSchema) => {
 
 export const sendResponse400 = (res: Response, serviceLogger: ServiceLogger, message?: string) => {
   serviceLogger.logger.error(message || "Bad Request");
-  res.status(400).json({ message: message || "Bad Request" });
+  res.status(StatusCodes.BAD_REQUEST).json({ message: message || "Bad Request" });
 };
 
-export const sendResponse200 = (res: Response, data: any) => res.status(200).json({ ...data });
+export const sendResponse200 = (res: Response, data: any) => res.status(StatusCodes.OK).json({ ...data });

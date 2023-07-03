@@ -1,6 +1,7 @@
 import express, { Request, Response } from "express";
 import { AuthService } from "../services/auth-service";
 import { makeServiceLogger } from "../logger";
+import { StatusCodes } from "http-status-codes";
 
 export const baseRuter = express.Router({ mergeParams: true });
 const serviceLogger = makeServiceLogger("base-service");
@@ -91,9 +92,9 @@ baseRuter
     const result = await AuthService.login(req.body);
 
     serviceLogger.logger.warn("Result", result);
-    if (!result.ok) return res.status(403).json({ message: result.message });
+    if (!result.ok) return res.status(StatusCodes.FORBIDDEN).json({ message: result.message });
 
-    res.status(200).json({ token: result.data });
+    res.status(StatusCodes.OK).json({ token: result.data });
   })
   .get("/", (_req: Request, res: Response) => {
     res.json({ isOk: true });

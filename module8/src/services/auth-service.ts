@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { User } from "../models/user/User";
 import jwt from "jsonwebtoken";
+import { StatusCodes } from "http-status-codes";
 
 export class AuthService {
   static login = async (fields: Partial<User>) => {
@@ -28,10 +29,10 @@ export class AuthService {
   static checkToken = (req: Request, res: Response, next: NextFunction) => {
     const token = req.headers["x-access-token"] as string;
 
-    if (!token) return res.status(401).json({ message: "Unauthorized" });
+    if (!token) return res.status(StatusCodes.UNAUTHORIZED).json({ message: "Unauthorized" });
 
     jwt.verify(token, "secret", (err) => {
-      if (err) return res.status(403).json({ message: "Forbidden" });
+      if (err) return res.status(StatusCodes.FORBIDDEN).json({ message: "Forbidden" });
       next();
     });
   };

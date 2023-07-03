@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from "express";
+import { StatusCodes } from "http-status-codes";
 import moment from "moment";
 import { createLogger, transports, format } from "winston";
 
@@ -87,5 +88,5 @@ export const typicalErrorsMiddleware = (_req: Request, res: Response, next: Next
 };
 
 export const notFoundMiddleware = (_req: Request, res: Response) => {
-  res.status(404).json({ message: "Not Found" });
+  res.status(StatusCodes.NOT_FOUND).json({ message: "Not Found" });
 };

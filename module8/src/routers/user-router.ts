@@ -4,6 +4,7 @@ import { UsersService } from "../services/users-service";
 import { makeServiceLogger } from "../logger";
 import { sendResponse200, sendResponse400 } from "../helpers";
 import { AuthService } from "../services/auth-service";
+import { StatusCodes } from "http-status-codes";
 
 export const usersRouter = express.Router({ mergeParams: true });
 
@@ -25,7 +26,7 @@ usersRouter
       } catch (error) {
         serviceLogger.logger.error("Internal Server Error", error);
 
-        res.status(500);
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR);
         next();
       }
     }
@@ -46,7 +47,7 @@ usersRouter
       } catch (error) {
         serviceLogger.logger.error("Internal Server Error", error);
 
-        res.status(500);
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR);
         next();
       }
     }
@@ -65,7 +66,7 @@ usersRouter
     } catch (error) {
       serviceLogger.logger.error("Internal Server Error", error);
 
-      res.status(500);
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR);
       next();
     }
   })
@@ -75,7 +76,7 @@ usersRouter
     } catch (error) {
       serviceLogger.logger.error("Internal Server Error", error);
 
-      res.status(500);
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR);
       next();
     }
   })
@@ -83,11 +84,11 @@ usersRouter
     try {
       await UsersService.removeUser(res.locals.user.id);
 
-      res.status(200).end();
+      res.status(StatusCodes.OK).end();
     } catch (error) {
       serviceLogger.logger.error("Internal Server Error", error);
 
-      res.status(500);
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR);
       next();
     }
   })
@@ -95,11 +96,11 @@ usersRouter
     try {
       const updatedUser = await UsersService.updateUser(res.locals.user, req.body);
 
-      res.status(200).json({ user: updatedUser });
+      res.status(StatusCodes.OK).json({ user: updatedUser });
     } catch (error) {
       serviceLogger.logger.error("Internal Server Error", error);
 
-      res.status(500);
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR);
       next();
     }
   });
@@ -114,7 +115,7 @@ usersRouter
     } catch (error) {
       serviceLogger.logger.error("Internal Server Error", error);
 
-      res.status(500);
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR);
       next();
     }
   })
@@ -123,11 +124,11 @@ usersRouter
       const result = await UsersService.addUsersToGroup(req.params.id, req.body.id);
 
       if (result.ok) return res.json({ user: result.data });
-      res.status(500).json({ message: "error: " + result.message });
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: "error: " + result.message });
     } catch (error) {
       serviceLogger.logger.error("Internal Server Error", error);
 
-      res.status(500);
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR);
       next();
     }
   });

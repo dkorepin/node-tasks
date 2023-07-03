@@ -1,3 +1,4 @@
+import { StatusCodes } from "http-status-codes";
 import request from "supertest";
 
 const baseURL = "http://localhost:3001";
@@ -11,7 +12,7 @@ describe('Auth service', () => {
             password:"0000",
         });
   
-      expect(response.statusCode).toBe(200);
+      expect(response.statusCode).toBe(StatusCodes.OK);
     });
   });
 

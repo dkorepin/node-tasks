@@ -4,6 +4,7 @@ import { validateGroup } from "../models/group/group-validation";
 import { makeServiceLogger } from "../logger";
 import { sendResponse400 } from "../helpers";
 import { AuthService } from "../services/auth-service";
+import { StatusCodes } from "http-status-codes";
 
 export const groupRouter = express.Router();
 const serviceLogger = makeServiceLogger("group-service");
@@ -21,7 +22,7 @@ groupRouter
       } catch (error) {
         serviceLogger.logger.error("Internal Server Error", error);
 
-        res.status(500);
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR);
         next();
       }
     }
@@ -42,7 +43,7 @@ groupRouter
       } catch (error) {
         serviceLogger.logger.error("Internal Server Error", error);
 
-        res.status(500);
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR);
         next();
       }
     }
@@ -61,7 +62,7 @@ groupRouter
     } catch (error) {
       serviceLogger.logger.error("Internal Server Error", error);
 
-      res.status(500);
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR);
       next();
     }
   })
@@ -71,7 +72,7 @@ groupRouter
     } catch (error) {
       serviceLogger.logger.error("Internal Server Error", error);
 
-      res.status(500);
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR);
       next();
     }
   })
@@ -79,11 +80,11 @@ groupRouter
     try {
       await GroupService.remove(res.locals.group.id);
 
-      res.status(200).end();
+      res.status(StatusCodes.OK).end();
     } catch (error) {
       serviceLogger.logger.error("Internal Server Error", error);
 
-      res.status(500);
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR);
       next();
     }
   })
@@ -91,11 +92,11 @@ groupRouter
     try {
       const updatedGroup = await GroupService.update(res.locals.group, req.body);
 
-      res.status(200).json({ group: updatedGroup });
+      res.status(StatusCodes.OK).json({ group: updatedGroup });
     } catch (error) {
       serviceLogger.logger.error("Internal Server Error", error);
 
-      res.status(500);
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR);
       next();
     }
   });

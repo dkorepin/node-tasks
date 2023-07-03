@@ -3,6 +3,7 @@ import request from "supertest";
 import fc from "fast-check";
 import { TEST_DATA_RUNS, baseURL, getToken } from "../test.helper";
 import { groupArbitrary } from "./group-service.test";
+import { StatusCodes } from "http-status-codes";
 
 const userArbitrary = fc.record<Partial<User>>({
   login: fc.string({ maxLength: 15, minLength: 4 }),
@@ -39,7 +40,7 @@ describe("/users", () => {
 
           it("Create new user should working", async () => {
             const response = await request(baseURL).post("/users").send(newUser).set("x-access-token", token);
-            expect(response.statusCode).toBe(200);
+            expect(response.statusCode).toBe(StatusCodes.OK);
             expect(response.body.user?.id).not.toBe(undefined);
             userId = response.body.user?.id;
             expect(response.body.user?.groups).toBe(undefined);
@@ -49,45 +50,45 @@ describe("/users", () => {
               .post("/users")
               .send({ login: newUser.login })
               .set("x-access-token", token);
-            expect(response.statusCode).toBe(400);
+            expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
             expect(response.body.status).toBe("failed");
           });
           it("Create new user should protect unauthorized", async () => {
             const response = await request(baseURL).post("/users").send(newUser).set("x-access-token", "bad token");
-            expect(response.statusCode).toBe(403);
+            expect(response.statusCode).toBe(StatusCodes.FORBIDDEN);
           });
           it("Get by id should return value", async () => {
             const response = await request(baseURL).get(`/users/${userId}`).set("x-access-token", token);
-            expect(response.statusCode).toBe(200);
+            expect(response.statusCode).toBe(StatusCodes.OK);
             expect(response.body.user).toEqual(expect.objectContaining(newUser));
           });
           it("Get by id should return error without user", async () => {
             const response = await request(baseURL).get(`/users/unhandledId`).set("x-access-token", token);
-            expect(response.statusCode).toBe(400);
+            expect(response.statusCode).toBe(StatusCodes.BAD_REQUEST);
           });
           it("Get by id should protect unauthorized", async () => {
             const response = await request(baseURL).get(`/users/${userId}`).set("x-access-token", "bad token");
-            expect(response.statusCode).toBe(403);
+            expect(response.statusCode).toBe(StatusCodes.FORBIDDEN);
           });
           it("Set group should protect unauthorized", async () => {
             const response = await request(baseURL)
               .post(`/users/addToGroup/${userId}`)
               .send({ id: groupId })
               .set("x-access-token", "bad token");
-            expect(response.statusCode).toBe(403);
+            expect(response.statusCode).toBe(StatusCodes.FORBIDDEN);
           });
           it("Set group should working", async () => {
             const response = await request(baseURL)
               .post(`/users/addToGroup/${userId}`)
               .send({ id: groupId })
               .set("x-access-token", token);
-            expect(response.statusCode).toBe(200);
+            expect(response.statusCode).toBe(StatusCodes.OK);
             const responseUser = await request(baseURL).get(`/users/${userId}`).set("x-access-token", token);
             expect(responseUser.body.user?.groups.length).toBe(1);
           });
-          it("Get all should return 200", async () => {
+          it("Get all should return StatusCodes.OK", async () => {
             const response = await request(baseURL).get("/users").set("x-access-token", token);
-            expect(response.statusCode).toBe(200);
+            expect(response.statusCode).toBe(StatusCodes.OK);
             expect(response.body.users).not.toBe(undefined);
           });
           it("Get all should return some count of users", async () => {
@@ -102,14 +103,14 @@ describe("/users", () => {
           });
           it("Get all should protect unauthorized", async () => {
             const response = await request(baseURL).get("/users").set("x-access-token", "bad token");
-            expect(response.statusCode).toBe(403);
+            expect(response.statusCode).toBe(StatusCodes.FORBIDDEN);
           });
           it("Update should update user", async () => {
             const response = await request(baseURL)
               .put(`/users/${userId}`)
               .send(updatedUser)
               .set("x-access-token", token);
-            expect(response.statusCode).toBe(200);
+            expect(response.statusCode).toBe(StatusCodes.OK);
             expect(response.body.user).toEqual(expect.objectContaining(updatedUser));
           });
           it("Update should protect unauthorized", async () => {
@@ -117,17 +118,17 @@ describe("/users", () => {
               .put(`/users/${userId}`)
               .send(updatedUser)
               .set("x-access-token", "bad token");
-            expect(response.statusCode).toBe(403);
+            expect(response.statusCode).toBe(StatusCodes.FORBIDDEN);
           });
           it("Delete should protect unauthorized", async () => {
             const response = await request(baseURL).delete(`/users/${userId}`).set("x-access-token", "bad token");
-            expect(response.statusCode).toBe(403);
+            expect(response.statusCode).toBe(StatusCodes.FORBIDDEN);
           });
           it("Delete should working", async () => {
             const response = await request(baseURL).delete(`/users/${userId}`).set("x-access-token", token);
-            expect(response.statusCode).toBe(200);
+            expect(response.statusCode).toBe(StatusCodes.OK);
             const responseFind = await request(baseURL).get(`/users/${userId}`).set("x-access-token", token);
-            expect(responseFind.statusCode).toBe(400);
+            expect(responseFind.statusCode).toBe(StatusCodes.BAD_REQUEST);
           });
         }),
         { numRuns: TEST_DATA_RUNS }
